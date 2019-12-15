@@ -11,28 +11,29 @@ var connection = mysql.createConnection({
     user: "root",
 
     // Your password
-    password: "Walid123@",
+    password: "",
     database: "bamazon"
 });
 //  connection to bamazon database.
 connection.connect(function (err) {
     if (err) throw err;
     console.log("connected as id " + connection.threadId);
+    // afterConnection();
     menuPrompt();
 
 });
 
 // call function to show the table created from Mysql/the table name is products
 
-// function afterConnection() {
-//     connection.query("SELECT * FROM products", function (err, res) {
-//         if (err) throw err;
-//         console.log(res);
-//         menuPrompt();
+function afterConnection() {
+    connection.query("SELECT * FROM products", function (err, res) {
+        if (err) throw err;
+        console.log(res);
+        menuPrompt();
 
-//     })
-// }
-
+    })
+}
+//  creat a menu function to ask the manager what he want to do:
 function menuPrompt() {
 
     inquirer
@@ -66,11 +67,11 @@ function menuPrompt() {
             }
             else if (answer.menu === "Add to Inventory") {
                 addInventory();
-                connection.end();
+                // connection.end();
             }
             else if (answer.menu === "Add New Product") {
                 addNewProduct();
-                connection.end();
+                // connection.end();
             }
 
             else {
@@ -81,7 +82,7 @@ function menuPrompt() {
 }
 
 // ===============================Product For Sale ==============================
-
+//  first prompt in the menu is produt that they are for sale/shows all table
 function productForSale() {
 
     connection.query("SELECT * FROM products", function (err, res) {
@@ -89,6 +90,9 @@ function productForSale() {
         console.log(res);
     })
 }
+
+// =============================Low Inventory====================================
+//low invwntory function will show all product that the stock quantity is less than 5
 function lowInventory() {
     connection.query("SELECT item_id, product_name, stock_quantity FROM Products WHERE stock_quantity < 5", function (err, res) {
         if (err) throw err;
@@ -97,107 +101,46 @@ function lowInventory() {
 }
 
 // ===============================Add Inventory =================================
-
-// function addInventory() {
-//     inquirer
-//         .prompt([
-//     {
-//         input: "id",
-//         message: "witch product do want to add?",
-//         name: "idNumber"
-//     },
-//     {
-//         input: "quantity",
-//         message: "witch quantity do want to add?",
-//         name: "addQuantity"
-//     }
-
-// ])
-// .then(function (answer) {
-// var newQuantity = answer.addQuantity;
-// console.log(newQuantity)
-//             connection.query(
-//                 "update products set ? where ?",
-//                 [
-//                     {
-//                         stock_quantity: answer.addQuantity
-//                     },
-//                     {
-//                         item_id: answer.idNumber
-//                     }
-//                 ])
-//             menuPrompt();
-
-//         })
-
-// }
-
+// add inventery function to add more quntity to selected item by ID.
 function addInventory() {
 
-    inquirer.prompt([{
+    inquirer.prompt([
+        {
 
-        type: "input",
-        name: "inputId",
-        message: "Please enter the ID number of the item you would like to add inventory to.",
-    },
-    {
-        type: "input",
-        name: "inputNumber",
-        message: "How many units of this item would you like to have in the in-store stock quantity?",
+            type: "input",
+            name: "inputId",
+            message: "Please enter the ID number of the item you would like to add inventory to.",
+        },
+        {
+            type: "input",
+            name: "inputQuantity",
+            message: "How many units of this item would you like to have in the in-store stock quantity?",
 
-    }
-        //     ]).then(function (managerAdd) {
-
-        //         connection.query("UPDATE products SET ? WHERE ?", [{
-
-        //             stock_quantity: managerAdd.inputNumber
-        //         }, {
-        //             item_id: managerAdd.inputId
-        //         }], function (err, res) {
-        //         });
-        //         menuPrompt();
-        //     });
-        // }
-
-        // // Pushes new stock to database.
+        }
 
     ]).then(function (answer) {
-        connection.query("SELECT * FROM products", function (err, res) {
+        var idnumberAdd = answer.inputId;
+        var quantitytoadd = answer.inputQuantity;
 
-            var chosenItem;
-
-            // Gets product who's stock needs to be updated.
-            for (let i = 0; i < res.length; i++) {
-                if (res[i].item_id === parseInt(answer.inputId)) {
-                    chosenItem = res[i];
+        connection.query(
+            "update products set ? where ?",
+            [
+                {
+                    stock_quantity: quantitytoadd
+                },
+                {
+                    item_id: idnumberAdd
                 }
-            }
+            ])
 
-            // Adds new stock  to existing stock.
-            var updatedStock = parseInt(chosenItem.stock_quantity) + parseInt(answer.inputNumber);
-
-            console.log("Updated stock: " + updatedStock);
-
-            // Updates stock for selected product in database.
-            connection.query("UPDATE products SET ? WHERE ?", [{
-                stock_quantity: updatedStock
-            }, {
-                item_id: answer.inputId
-            }], function (err, res) {
-                if (err) {
-                    throw err;
-                } else {
-
-                    // Lets manager select new action.
-                    menuPrompt();
-                }
-            });
-
-        });
+        console.log("the availible quantity now after the manager changes is : " + " " + quantitytoadd + "for the product Id :"
+            + "" + idnumberAdd);
 
     });
-};
-// ==================================Add New Product=================================
+}
+
+// ==========================Add Products ===================================
+
 function addNewProduct() {
 
 
@@ -205,11 +148,7 @@ function addNewProduct() {
 
     inquirer
         .prompt([
-            // {
-            //     name: "itemId",
-            //     type: "input",
-            //     message: "What is the item  Id you would like to add?"
-            // },
+
             {
                 name: "itemName",
                 type: "input",
@@ -245,18 +184,21 @@ function addNewProduct() {
             },
         ])
         .then(function (answer) {
-            const sqlQuery = `INSERT INTO products 
-            (product_name, stock_quantity, departement_name, price) 
-            VALUES
-            (${answer.itemName}, ${answer.itemQuantity || 0}, ${answer.departName}, ${answer.itemPrice || 0})`
-            console.log('answer:', answer)
-            //             insert into products( product_name, stock_quantity, departement_name, price)
-            // values ( "hata",'10', "clothing",'10');
-            connection.query(sqlQuery, function (err, res) {
-                console.log('hitting connection.query')
-                if (err) throw err;
-                console.log('Record inserted into DB')
-            });
-            menuPrompt();
+            // when finished prompting, insert a new item into the table with that info
+            connection.query(
+                "INSERT INTO products SET ?",
+                {
+                    product_name: answer.itemName,
+                    departement_name: answer.departName,
+                    stock_quantity: answer.itemQuantity || 0,
+                    price: answer.itemPrice || 0
+                },
+                function (err) {
+                    if (err) throw err;
+                    console.log("Your row was created successfully!");
+                    // re-prompt the manager want to go back to menu
+                    menuPrompt();
+                }
+            );
         });
 }
