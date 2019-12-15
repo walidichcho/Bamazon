@@ -9,13 +9,25 @@ npm install.
 Bamazon uses some node modules and connects to a Mysql database to store and retrieve product and department information.
  
 Mysqi main Table has ten rows and 5 columns:
+
+![](images/maintable.png)
  
  
 Customer Bamazon Module
  
-The customer module lets users select a product to purchase, enter the number of items they wish to purchase, and then complete the purchase.
-The complete purchase process shows how much the total cost is (based on number of items).
-The customer module also updates to the stock quantity for a department, based on the purchased product's department.
+
+
+![](images/order.png)
+
+
+if there is no enough quantity, the system will say sorry:
+
+![](images/quant.png)
+
+
+![](images/uodtable.png)
+
+
 To run this module in the terminal:
 node bamazonCustomer.js
  
