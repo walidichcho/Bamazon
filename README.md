@@ -38,6 +38,37 @@ As part of adding a product, if the department doesn't exist, it will get added 
 New products and new departments appear in the products and departments tables.
 To run this module in the terminal:
 node bamazonManager.js
+
+=======Product For Sale=============
+
+![](images/manager1.png)
+
+=======Low Inventrory===============
+
+![](images/manager2.png)
+
+========Add Inventory =============
+
+![](images/manager3.png)
+
+![](images/manager4.png)
+
+![](images/manager5.png)
+
+========Add Products =============
+
+![](images/manager6.png)
+
+![](images/manager7.png)
+
+
+
+
+
+
+
+
+
  
 
 
