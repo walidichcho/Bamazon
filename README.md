@@ -8,7 +8,7 @@ They are all dependencies in the package.json, so just run:
 npm install.
 Bamazon uses some node modules and connects to a Mysql database to store and retrieve product and department information.
  
-Mysqi main Table has ten rows and 5 columns:
+MySQL main Table has ten rows and 5 columns:
 
 ![](images/maintable.png)
  
