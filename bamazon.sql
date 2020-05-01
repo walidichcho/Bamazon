@@ -16,7 +16,7 @@ create table products(
 
 );
 
--- insert 10 data for 10 products
+-- insert 10 data for 10 product
 use bamazon;
 
 insert into products(product_name, departement_name, price, stock_quantity)
